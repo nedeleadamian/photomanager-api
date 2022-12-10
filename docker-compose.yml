@@ -1,0 +1,32 @@
+version: '3.9'
+services:
+
+  server:
+    container_name: ${APP_NAME}-server
+    build:
+      context: .
+    env_file: .env
+    depends_on:
+      - mongo
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/usr/local/app
+      - storage:/usr/local/app/storage
+      - translations:/usr/local/app/translations
+      - /usr/local/app/node_modules
+    command: yarn start:dev
+
+  mongo:
+    image: mongo:${MONGO_VERSION}
+    container_name: ${APP_NAME}-mongo
+    env_file: .env
+    volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    ports:
+      - "27017:27017"
+    tty: true
+
+volumes:
+  storage:
